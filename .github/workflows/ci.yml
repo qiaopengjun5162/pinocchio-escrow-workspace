@@ -29,15 +29,25 @@ jobs:
         with:
           tool: just,taplo-cli
 
-     # 3. 安装 Agave (Solana) 工具链，并手动更新 SBF 编译器
+     # 3. 安装 Solana (Agave) 工具链并确保编译器版本足够新
       - name: Install Solana CLI
         run: |
+          # 1. 下载并安装
           sh -c "$(curl -sSfL https://release.anza.xyz/v2.1.0/install)"
-          # 将 Solana bin 添加到路径
-          echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
-          # 关键步骤：强制下载支持最新 Rust 版本的 SBF 工具链
-          export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
+
+          # 2. 定义路径变量
+          SOLANA_BIN="$HOME/.local/share/solana/install/active_release/bin"
+
+          # 3. 立即将路径添加到当前 Shell 环境（用于下面的命令）
+          export PATH="$SOLANA_BIN:$PATH"
+
+          # 4. 将路径永久添加到 GitHub Actions 的后续步骤中
+          echo "$SOLANA_BIN" >> $GITHUB_PATH
+
+          # 5. 关键：更新并强制安装最新的平台工具链（解决 rustc 版本太低的问题）
           solana-install update
+          # 预运行一次以确保编译器镜像被下载
+          cargo-build-sbf --version
 
       # 4. 缓存 Cargo 依赖和编译产物 (针对整个 Workspace)
       - name: Cache Cargo
