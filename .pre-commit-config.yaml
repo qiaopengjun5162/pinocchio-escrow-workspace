@@ -1,0 +1,60 @@
+fail_fast: false
+default_install_hook_types: [pre-commit, commit-msg]
+default_stages: [pre-commit, manual]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-byte-order-marker
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+
+  - repo: local
+    hooks:
+     # 1. Rust 格式化：使用 --all 检查整个工作区
+      - id: cargo-fmt
+        name: cargo fmt
+        entry: cargo fmt --all -- --check
+        language: system
+        types: [rust]
+        pass_filenames: false
+
+      # 2. TOML 格式化：确保匹配所有目录下的 toml
+      - id: taplo-fmt
+        name: taplo fmt
+        entry: taplo fmt
+        language: system
+        files: \.toml$
+
+      # 3. 拼写检查
+      - id: typos
+        name: typos
+        entry: bash -c 'typos'
+        language: system
+        pass_filenames: false
+
+     # 4. 全局 Workspace 检查：不再需要 cd 进入子目录
+      - id: cargo-check
+        name: cargo check (workspace)
+        entry: cargo check --workspace
+        language: system
+        pass_filenames: false
+
+      - id: cargo-clippy
+        name: cargo clippy (workspace)
+        entry: cargo clippy --workspace --all-targets --all-features -- -D warnings
+        language: system
+        pass_filenames: false
+
+      # 5. 安全审计：使用根目录的 deny.toml
+      - id: cargo-deny
+        name: cargo deny check
+        entry: cargo deny check
+        language: system
+        pass_filenames: false
