@@ -23,9 +23,11 @@ jobs:
           toolchain: 1.92.0
           components: rustfmt, clippy
 
-      # 2. 安装 Just 控制构建流程
-      - name: Install Just
-        uses: taiki-e/install-action@just
+      # 2. 安装 Just 和 Taplo (使用 taiki-e 的 action 同时安装多个工具)
+      - name: Install Tools
+        uses: taiki-e/install-action@v2
+        with:
+          tool: just,taplo-cli
 
       # 3. 安装 Solana 工具链 (使用 v2.1.0+ 以支持 Rust 1.84+ 新特性)
       - name: Install Solana CLI
