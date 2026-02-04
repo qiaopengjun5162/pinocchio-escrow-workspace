@@ -33,7 +33,7 @@ jobs:
       - name: Install Solana CLI
         run: |
           # 1. 安装
-          sh -c "$(curl -sSfL https://release.anza.xyz/v2.1.0/install)"
+          sh -c "$(curl -sSfL https://release.anza.xyz/v3.0.13/install)"
 
           # 2. 显式定义绝对路径 (Agave 默认安装位置)
           SOLANA_BIN="$HOME/.local/share/solana/install/active_release/bin"
