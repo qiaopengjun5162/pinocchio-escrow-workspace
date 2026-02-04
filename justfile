@@ -9,7 +9,7 @@ check:
 
 # 编译所有程序
 build-all:
-    cargo build-sbf -- --tools-version v1.51
+    cargo build-sbf
     just collect-artifacts
 
 # 提取生成的 .so 文件到根目录的 artifacts 文件夹
